@@ -29,9 +29,9 @@ Route::get('/paypal', function () {
 
 Route::post('paypal', [PaypalController::class, 'paypal'])->middleware(['auth', 'verified'])->name('paypal');
 
-Route::post('success', [PaypalController::class, 'success'])->middleware(['auth', 'verified'])->name('success');
+Route::get('success', [PaypalController::class, 'success'])->middleware(['auth', 'verified'])->name('success');
 
-Route::post('cancel', [PaypalController::class, 'cancel'])->middleware(['auth', 'verified'])->name('cancel');
+Route::get('cancel', [PaypalController::class, 'cancel'])->middleware(['auth', 'verified'])->name('cancel');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

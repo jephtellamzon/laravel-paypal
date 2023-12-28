@@ -42,6 +42,11 @@ class PaypalController extends Controller
 
     public function success(Request $request)
     {
+        $provider = new PayPalClient;
+        $provider->setApiCredentials(config('paypal'));
+        $paypalToken = $provider->getAccessToken();
+        $response = $provider->capturePaymentOrder($request->token);
+        dd($response);
     }
 
     public function cancel(Request $request)
