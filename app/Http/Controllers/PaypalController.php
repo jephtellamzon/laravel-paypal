@@ -38,9 +38,9 @@ class PaypalController extends Controller
                     return redirect()->away($link['href']);
                 }
             }
-            return redirect()->route('cancel')->with('error', 'Something went wrong. Payment cancelled.');
+            return redirect()->route('cancelled')->with('error', $response['message'] ?? 'Something went wrong. Payment cancelled.');
         } else {
-            return redirect()->route('cancel')->with('error', $response['message'] ?? 'Something went wrong. Payment cancelled.');
+            return redirect()->route('cancelled')->with('error', $response['message'] ?? 'Something went wrong. Payment cancelled.');
         }
     }
 
@@ -73,12 +73,12 @@ class PaypalController extends Controller
             unset($_SESSION['quantity']);
         } else {
 
-            return redirect()->route('cancel')->with('error', $response['message'] ?? 'Something went wrong. Payment cancelled.');
+            return redirect()->route('cancelled')->with('error', $response['message'] ?? 'Something went wrong. Payment cancelled.');
         }
     }
 
     public function cancel(Request $request)
     {
-        return 'Payment is cancelled';
+        return redirect()->route('cancelled')->with('error', $response['message'] ?? 'Something went wrong. Payment cancelled.');
     }
 }
