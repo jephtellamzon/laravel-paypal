@@ -38,8 +38,9 @@ class PaypalController extends Controller
                     return redirect()->away($link['href']);
                 }
             }
+            return redirect()->route('cancel')->with('error', 'Something went wrong. Payment cancelled.');
         } else {
-            return redirect()->route('cancel');
+            return redirect()->route('cancel')->with('error', $response['message'] ?? 'Something went wrong. Payment cancelled.');
         }
     }
 
@@ -64,13 +65,15 @@ class PaypalController extends Controller
             $payment->payment_method = 'PayPal';
             $payment->save();
 
-            return "Payment is successful";
+            // return "Payment is successful";
+
+            return redirect()->route('completed')->with('success', 'Transaction complete.');
 
             unset($_SESSION['product_name']);
             unset($_SESSION['quantity']);
         } else {
 
-            return redirect()->route('cancel');
+            return redirect()->route('cancel')->with('error', $response['message'] ?? 'Something went wrong. Payment cancelled.');
         }
     }
 
