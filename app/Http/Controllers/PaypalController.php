@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Srmklive\PayPal\Services\PayPal as PaypalClient;
 
@@ -32,6 +33,8 @@ class PaypalController extends Controller
         if (isset($response['id']) && $response['id'] != null) {
             foreach ($response['links'] as $link) {
                 if ($link['rel'] === 'approve') {
+                    session()->put('product_name', $request->product_name);
+                    session()->put('quantity', $request->quantity);
                     return redirect()->away($link['href']);
                 }
             }
@@ -46,10 +49,33 @@ class PaypalController extends Controller
         $provider->setApiCredentials(config('paypal'));
         $paypalToken = $provider->getAccessToken();
         $response = $provider->capturePaymentOrder($request->token);
-        dd($response);
+
+        if (isset($response['status']) && $response['status'] == 'COMPLETED') {
+
+            $payment = new Payment;
+            $payment->payment_id = $response['id'];
+            $payment->product_name = session()->get('product_name');
+            $payment->quantity = session()->get('quantity');
+            $payment->amount = $response['purchase_units'][0]['payments']['captures'][0]['amount']['value'];
+            $payment->currency = $response['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code'];
+            $payment->customer_name = $response['payer']['name']['given_name'] . ' ' . $response['payer']['name']['surname'];
+            $payment->customer_email = $response['payer']['email_address'];
+            $payment->payment_status = $response['status'];
+            $payment->payment_method = 'PayPal';
+            $payment->save();
+
+            return "Payment is successful";
+
+            unset($_SESSION['product_name']);
+            unset($_SESSION['quantity']);
+        } else {
+
+            return redirect()->route('cancel');
+        }
     }
 
     public function cancel(Request $request)
     {
+        return 'Payment is cancelled';
     }
 }
