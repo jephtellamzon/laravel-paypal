@@ -27,11 +27,11 @@ Route::get('/paypal', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::post('paypal', [PaypalController::class, 'paypal'])->middleware(['auth', 'verified']);
+Route::post('paypal', [PaypalController::class, 'paypal'])->middleware(['auth', 'verified'])->name('paypal');
 
-Route::post('paypal', [PaypalController::class, 'success'])->middleware(['auth', 'verified']);
+Route::post('success', [PaypalController::class, 'success'])->middleware(['auth', 'verified'])->name('success');
 
-Route::post('paypal', [PaypalController::class, 'cancel'])->middleware(['auth', 'verified']);
+Route::post('cancel', [PaypalController::class, 'cancel'])->middleware(['auth', 'verified'])->name('cancel');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -39,4 +39,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
