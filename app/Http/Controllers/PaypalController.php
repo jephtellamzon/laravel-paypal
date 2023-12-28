@@ -27,6 +27,17 @@ class PaypalController extends Controller
                 ]
             ]
         ]);
+
+        // conditional for redirecting to paypal
+        if (isset($response['id']) && $response['id'] != null) {
+            foreach ($response['links'] as $link) {
+                if ($link['rel'] === 'approve') {
+                    return redirect()->away($link['href']);
+                }
+            }
+        } else {
+            return redirect()->route('cancel');
+        }
     }
 
     public function success(Request $request)
