@@ -23,10 +23,6 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/paypal', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::post('paypal', [PaypalController::class, 'paypal'])->middleware(['auth', 'verified'])->name('paypal');
 
 Route::get('success', [PaypalController::class, 'success'])->middleware(['auth', 'verified'])->name('success');
