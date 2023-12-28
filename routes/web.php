@@ -29,6 +29,10 @@ Route::get('success', [PaypalController::class, 'success'])->middleware(['auth',
 
 Route::get('cancel', [PaypalController::class, 'cancel'])->middleware(['auth', 'verified'])->name('cancel');
 
+Route::get('completed', function () {
+    return view('completed');
+})->middleware(['auth', 'verified'])->name('completed');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
