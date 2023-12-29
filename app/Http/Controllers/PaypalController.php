@@ -10,9 +10,13 @@ class PaypalController extends Controller
 {
     public function paypal(Request $request)
     {
+        // init paypal client
         $provider = new PayPalClient;
+        // get sandbox credentials to config file
         $provider->setApiCredentials(config('paypal'));
+        // get token
         $paypalToken = $provider->getAccessToken();
+        // create order based on request
         $response = $provider->createOrder([
             'intent' => 'CAPTURE',
             'application_context' => [
@@ -46,11 +50,16 @@ class PaypalController extends Controller
 
     public function success(Request $request)
     {
+        // init paypal client
         $provider = new PayPalClient;
+        // get sandbox credentials to config file
         $provider->setApiCredentials(config('paypal'));
+        // get token
         $paypalToken = $provider->getAccessToken();
+        // capture payment from paypal
         $response = $provider->capturePaymentOrder($request->token);
 
+        // conditional for paypal response and saving payment details to db
         if (isset($response['status']) && $response['status'] == 'COMPLETED') {
 
             $payment = new Payment;
@@ -65,7 +74,6 @@ class PaypalController extends Controller
             $payment->payment_method = 'PayPal';
             $payment->save();
 
-            // return "Payment is successful";
 
             return redirect()->route('completed')->with('success', 'Transaction complete.');
 
@@ -79,6 +87,7 @@ class PaypalController extends Controller
 
     public function cancel(Request $request)
     {
+        // redirect to cancelled view/page
         return redirect()->route('cancelled')->with('error', $response['message'] ?? 'Something went wrong. Payment cancelled.');
     }
 }
